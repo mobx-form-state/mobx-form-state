@@ -1,0 +1,52 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "start": "yarn workspace site start",
+    "build": "yarn build:clean && yarn build:lib && yarn copy:files",
+    "build:site": "yarn workspace site build",
+    "build:lib": "tsc --project tsconfig.build.json",
+    "build:clean": "ts-node ./scripts/clean-build",
+    "copy:files": "lerna run copy:files",
+    "publish": "lerna publish --force-publish=* --no-verify-access --contents build",
+    "prepublish": "yarn build",
+    "code:check": "yarn code:lint; yarn code:format --check",
+    "code:clean": "yarn code:lint --fix; yarn code:format --write",
+    "code:lint": "eslint --ext .js,.jsx,.ts,.tsx \"packages/\"",
+    "code:format": "prettier './packages/**/**.{js,jsx,ts,tsx}'"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^13.0.0",
+    "@trivago/prettier-plugin-sort-imports": "^3.3.0",
+    "@types/fs-extra": "^9.0.13",
+    "@types/jest": "^27.4.1",
+    "@types/node": "^18.0.0",
+    "@types/react": "^18.0.9",
+    "@typescript-eslint/eslint-plugin": "^5.17.0",
+    "@typescript-eslint/parser": "^5.17.0",
+    "eslint": "^8.12.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-react": "^7.29.4",
+    "fs-extra": "^10.1.0",
+    "jest": "^27.5.1",
+    "lerna": "^5.0.0",
+    "mobx": "^6.0.0",
+    "mobx-react-lite": "^3.4.0",
+    "prettier": "^2.6.2",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "react-is": "^18.2.0",
+    "ts-jest": "^27.1.4",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.6.3"
+  },
+  "workspaces": [
+    "packages/*",
+    "site"
+  ],
+  "dependencies": {
+    "@mobx-form-state/core": "file:packages/core",
+    "@mobx-form-state/react": "file:packages/react",
+    "@react-run/app": "^0.0.5"
+  }
+}

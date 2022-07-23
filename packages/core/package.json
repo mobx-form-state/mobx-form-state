@@ -1,0 +1,35 @@
+{
+  "name": "@mobx-form-state/core",
+  "version": "1.0.0-alpha.20",
+  "description": "core package",
+  "keywords": [
+    "mobx",
+    "form"
+  ],
+  "author": "alexolefirenko <olefirenk@gmail.com>",
+  "homepage": "https://mobx-form-state.netlify.com",
+  "license": "MIT",
+  "main": "./index.js",
+  "typings": "./index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mobx-form-state/mobx-form-state.git"
+  },
+  "scripts": {
+    "copy:files": "ts-node ../../scripts/copy-files",
+    "prepublish": "ts-node ../../scripts/copy-package-json"
+  },
+  "bugs": {
+    "url": "https://github.com/mobx-form-state/mobx-form-state/issues"
+  },
+  "dependencies": {
+    "fast-deep-equal": "^3.1.3"
+  },
+  "peerDependencies": {
+    "mobx": "^6.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "9e249b7bb2f50df226762982b5a4312d637f7d69"
+}

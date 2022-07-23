@@ -1,0 +1,15 @@
+{
+  "printWidth": 120,
+  "singleQuote": true,
+  "semi": true,
+  "tabWidth": 2,
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "importOrderParserPlugins": [
+    "typescript",
+    "jsx",
+    "classProperties",
+    "[\"decorators\", { \"decoratorsBeforeExport\": true }]"
+  ],
+  "importOrder": ["<THIRD_PARTY_MODULES>", "^[./]"]
+}

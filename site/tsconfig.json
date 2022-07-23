@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+  "include": ["src/**/*", "./tests/**/*"],
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "skipLibCheck": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": false,
+    "jsx": "react-jsx"
+  },
+  "exclude": ["node_modules"]
+}
