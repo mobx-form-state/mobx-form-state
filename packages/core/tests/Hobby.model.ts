@@ -1,5 +1,4 @@
 import { field } from '../src/decorators';
-
 import { required } from './utils';
 
 export class Hobby {

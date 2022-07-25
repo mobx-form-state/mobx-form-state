@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Field } from './field';
 
 export type Normalizer<TValue = any, MValue = any, FValue = any> = (

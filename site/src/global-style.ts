@@ -118,7 +118,7 @@ button:focus {
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         margin: 0;
         padding: 0;
-        color: #333;
+        color: rgb(0,30,60);
     }
 
     label{

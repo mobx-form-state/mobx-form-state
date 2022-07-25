@@ -1,10 +1,8 @@
 import { field, fieldArray } from '../src/decorators';
 import { FieldArrayType } from '../src/field-array';
-
-import { minLength, required, trim, willThrowAnError } from './utils';
-
-import { Hobby } from './Hobby.model';
 import { EmailsModel } from './Emails.model';
+import { Hobby } from './Hobby.model';
+import { minLength, required, trim, willThrowAnError } from './utils';
 
 export class UserFormModel extends EmailsModel {
   @field({ validate: [required(), minLength(3)] })

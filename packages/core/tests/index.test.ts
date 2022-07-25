@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { autorun } from 'mobx';
 import { Form } from '@mobx-form-state/core';
 import { Values } from '@mobx-form-state/core/values';
+import { autorun } from 'mobx';
 
 import { UserFormModel } from './UserForm.model';
 

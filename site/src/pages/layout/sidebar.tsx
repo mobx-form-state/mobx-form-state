@@ -2,11 +2,12 @@ import { Drawer, List, ListItem, ListItemButton, ListItemText } from '@mui/mater
 import styled from 'styled-components';
 
 import { NavLink } from '../../components/nav-link';
+import { Logo } from '../../logo';
 
 export const Sidebar = () => (
   <Drawer variant="persistent" open>
-    <NavLink as={Logo} to="/">
-      🚀 Mobx form state
+    <NavLink as={Home} to="/">
+      <Logo /> MobX form state
     </NavLink>
     <StyledList>
       <ListItem disablePadding>
@@ -32,11 +33,16 @@ const StyledList = styled(List)`
   width: 280px;
 `;
 
-const Logo = styled.a`
-  display: block;
+const Home = styled.a`
+  display: flex;
+  margin: 0 auto;
+  align-items: center;
+  gap: 5px;
   cursor: pointer;
-  text-align: center;
-  color: rgb(78 78 98);
+  color: gb(0, 30, 60);
   font-size: 24px;
   padding: 20px 10px;
+  svg {
+    font-size: 40px;
+  }
 `;

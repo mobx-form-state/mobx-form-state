@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Field } from './field';
 import { HashName } from './hash-name';
 import { Callback, MaybeArray } from './types';

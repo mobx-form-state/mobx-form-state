@@ -24,14 +24,13 @@ export const Container = styled.div`
   h1 {
     font-size: 2.5rem;
     font-weight: bold;
-    color: #34404e;
     margin-bottom: 2rem;
   }
-  h2 {
-    color: #34404e;
 
+  h2 {
     margin: 2rem 0;
   }
+
   a {
     color: #e26f6f;
   }
