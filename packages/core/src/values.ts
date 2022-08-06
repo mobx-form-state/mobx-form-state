@@ -75,7 +75,7 @@ export namespace Values {
   };
 
   export const fromEvent = <TValue>(e: ChangeEvent<TValue>): TValue => {
-    if (typeof e === 'object' && 'target' in e) {
+    if (typeof e === 'object' && e !== null && 'target' in e) {
       switch (e.target.type) {
         case 'checkbox':
           return e.target.checked as TValue;
