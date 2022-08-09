@@ -3,6 +3,7 @@ import { Form } from '@mobx-form-state/core';
 import { Values } from '@mobx-form-state/core/values';
 import { autorun } from 'mobx';
 
+import { EmailsModel } from './Emails.model';
 import { UserFormModel } from './UserForm.model';
 
 describe('simple example', () => {
@@ -381,5 +382,14 @@ describe('simple example', () => {
 
     expect(form.submitFailed).toBeTruthy();
     expect(form.errorMessage).toBe('User not exist');
+  });
+
+  test('Model inheritance', () => {
+    const userForm = new Form(UserFormModel);
+
+    const emailsForm = new Form(EmailsModel);
+
+    expect(Object.keys(userForm.fields)).toEqual(Object.keys(new UserFormModel()));
+    expect(Object.keys(emailsForm.fields)).toEqual(Object.keys(new EmailsModel()));
   });
 });

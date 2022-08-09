@@ -8,13 +8,18 @@ export const field =
   (target: unknown, key: string): void => {
     if (!Fields.asModelMeta<MValue[K], MValue, any, DValue>(target)) return;
 
-    if (!target[Fields.$]) {
+    if (!Object.prototype.hasOwnProperty.call(target, Fields.$)) {
       Object.defineProperty(target, Fields.$, {
         configurable: true,
         enumerable: true,
         writable: true,
       });
-      target[Fields.$] = [];
+
+      const inheritedModel = Object.getPrototypeOf(target);
+
+      target[Fields.$] = Object.prototype.hasOwnProperty.call(inheritedModel, Fields.$)
+        ? inheritedModel[Fields.$].slice()
+        : [];
     }
 
     target[Fields.$]?.push({

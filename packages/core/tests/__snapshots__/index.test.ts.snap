@@ -27,6 +27,7 @@ Object {
   ],
   "employed": false,
   "flavor": Array [],
+  "hobbies": Array [],
   "login": "login",
   "password": "password",
   "sause": "",
