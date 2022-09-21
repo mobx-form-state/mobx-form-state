@@ -1,6 +1,6 @@
 {
   "name": "@mobx-form-state/core",
-  "version": "1.0.0-alpha.23",
+  "version": "1.0.0",
   "description": "core package",
   "keywords": [
     "mobx",
