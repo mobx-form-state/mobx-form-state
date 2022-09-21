@@ -22,7 +22,9 @@ export type ControlProps<
   MValue = any,
   FValue = any
 > = OfC extends FunctionComponent<infer OfCP>
-  ? BaseControl<TValue, MValue, FValue, FunctionComponent<OfCP>> & Omit<OfCP, 'of' | 'field'>
+  ? BaseControl<TValue, MValue, FValue, FunctionComponent<OfCP>> &
+      Omit<OfCP, 'of' | 'field' | keyof FormElementProps> &
+      FormElementProps<TValue>
   : BaseControl<TValue, MValue, FValue, OfC> & ComponentPropsWithRef<OfC>;
 
 export type BaseControl<TValue, MValue, FValue, OfC> = {
