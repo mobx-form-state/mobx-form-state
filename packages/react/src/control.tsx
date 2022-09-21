@@ -14,6 +14,10 @@ export type FormElementProps<TValue = any> = {
   error?: boolean;
 };
 
+type ExtractByType<T, Value> = {
+  [P in keyof T as P extends Value ? P : never]: T[P];
+};
+
 export type FormElement<Props = any> = FunctionComponent<Props> | 'input' | 'textarea' | 'select';
 
 export type ControlProps<
@@ -24,7 +28,7 @@ export type ControlProps<
 > = OfC extends FunctionComponent<infer OfCP>
   ? BaseControl<TValue, MValue, FValue, FunctionComponent<OfCP>> &
       Omit<OfCP, 'of' | 'field' | keyof FormElementProps> &
-      FormElementProps<TValue>
+      Partial<ExtractByType<OfCP, keyof FormElementProps>>
   : BaseControl<TValue, MValue, FValue, OfC> & ComponentPropsWithRef<OfC>;
 
 export type BaseControl<TValue, MValue, FValue, OfC> = {
