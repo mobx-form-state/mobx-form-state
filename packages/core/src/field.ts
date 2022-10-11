@@ -38,6 +38,7 @@ export class Field<TValue = any, MValue = any, FValue = any> extends Disposable 
 
     this.updateValue(config.defaultValue);
     this.autoDispose(this.form.registerValidator(this.validate, this.hashName));
+    this.autoDispose(this.cleanup);
   }
 
   @computed
@@ -117,6 +118,12 @@ export class Field<TValue = any, MValue = any, FValue = any> extends Disposable 
     } else {
       this.errors[this.key] = message as typeof this.errors[keyof typeof this.errors];
     }
+  };
+
+  @action
+  private cleanup = (): void => {
+    delete this.values[this.key];
+    delete this.errors[this.key];
   };
 
   private validate = async (): Promise<boolean> => {

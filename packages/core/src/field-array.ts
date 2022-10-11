@@ -10,7 +10,7 @@ import { Disposable } from './utils/disposable';
 export type FieldArrayType<M> = Opaque<'fieldArray', M[]>;
 
 export class FieldArray<TValue, FValue> extends Disposable {
-  @observable
+  @observable.ref
   private value: Fields.FromModel<TValue, FValue>[] = [];
 
   public readonly hashName: HashName;
@@ -36,35 +36,36 @@ export class FieldArray<TValue, FValue> extends Disposable {
   }
 
   @computed
-  private get values(): FValue {
-    return HashName.getContext<FValue, FValue>(this.hashName, this.form.values as FValue);
+  public get fields(): readonly Fields.FromModel<TValue, FValue>[] {
+    return this.value;
   }
 
   public get key(): keyof FValue {
     return HashName.getKey(this.hashName, this.hashNameContext);
   }
 
-  public get fields(): readonly Fields.FromModel<TValue, FValue>[] {
-    return this.value;
-  }
-
   @action
   public readonly push = (value: Partial<TValue>): void => {
-    this.value.push(
-      Fields.create(this.config.type, this.form, value, HashName.create(this.value.length, this.hashName))
-    );
+    const hashName = HashName.create(this.value.length, this.hashName);
+
+    HashName.getContext(hashName, this.form.errors);
+    HashName.getContext(hashName, this.form.values);
+
+    this.value = this.value.concat(Fields.create(this.config.type, this.form, value, hashName));
   };
 
   @action
   public readonly remove = (index: number): void => {
-    const deleted = this.value.splice(index, 1);
+    if (index in this.value) {
+      const deleted = this.value[index];
+      const nextValue = this.value.slice();
 
-    this.disposeFields(deleted);
-  };
+      delete nextValue[index];
 
-  @action
-  public readonly updateValue = (value: TValue[]): void => {
-    (this.values[this.key] as unknown as TValue[]) = value as unknown as TValue[];
+      this.value = nextValue;
+
+      this.disposeFields([deleted]);
+    }
   };
 
   private disposeFields = (fields: Fields.FromModel<TValue, FValue>[]): void => {
