@@ -1,6 +1,6 @@
 {
   "name": "@mobx-form-state/react",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "react bindings",
   "keywords": [
     "mobx",
@@ -29,7 +29,7 @@
     "react": "^17 || ^18"
   },
   "dependencies": {
-    "@mobx-form-state/core": "^1.0.1"
+    "@mobx-form-state/core": "^1.0.2"
   },
   "publishConfig": {
     "access": "public"
