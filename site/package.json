@@ -1,7 +1,7 @@
 {
   "name": "site",
   "private": true,
-  "version": "1.0.3-alpha.0",
+  "version": "1.0.3-alpha.1",
   "description": "> TODO: description",
   "author": "alexolefirenko <olefirenk@gmail.com>",
   "license": "ISC",
@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@fontsource/roboto": "^4.5.7",
-    "@mobx-form-state/core": "^1.0.2",
-    "@mobx-form-state/react": "^1.0.2",
+    "@mobx-form-state/core": "^1.0.3",
+    "@mobx-form-state/react": "^1.0.3",
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.8.1",
     "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest",
