@@ -42,6 +42,14 @@ export namespace Fields {
     defaultValue?: MValue[];
   };
 
+  export type FieldState<TValue> = {
+    active: boolean;
+    touched: boolean;
+    visited: boolean;
+    valid: boolean;
+    value: TValue;
+  };
+
   export const create = <MValue, FValue>(
     Model: ModelClass<MValue>,
     form: Form<FValue>,

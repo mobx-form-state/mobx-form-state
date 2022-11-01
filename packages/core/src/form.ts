@@ -116,9 +116,8 @@ export class Form<MValue> extends Disposable {
 
     const { onSubmitFail } = this.config;
 
-    if (this.pristine || !this.touched || this.submitFailed) {
-      await this.validate();
-    }
+    await this.validate();
+
     runInAction(() => {
       this.touched = true;
     });
@@ -193,6 +192,10 @@ export class Form<MValue> extends Disposable {
     return (): void => {
       this.validators.delete(hashName);
     };
+  };
+
+  public removeValidator = (hashName: HashName): void => {
+    this.validators.delete(hashName);
   };
 
   public validate = async (): Promise<void> => {

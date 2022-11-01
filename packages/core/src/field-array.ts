@@ -1,11 +1,13 @@
 import { action, computed, makeObservable, observable } from 'mobx';
 
+import { Field } from './field';
 import { Fields } from './fields';
 import { Form } from './form';
 import { HashName } from './hash-name';
 import { Opaque } from './types';
 import { assert } from './utils/assert';
 import { Disposable } from './utils/disposable';
+import { Values } from './values';
 
 export type FieldArrayType<M> = Opaque<'fieldArray', M[]>;
 
@@ -40,6 +42,16 @@ export class FieldArray<TValue, FValue> extends Disposable {
     return this.value;
   }
 
+  @computed
+  private get errors(): Values.Errors<TValue>[] {
+    return HashName.getContext(this.hashName, this.form.errors);
+  }
+
+  @computed
+  private get values(): TValue[] {
+    return HashName.getContext(this.hashName, this.form.values);
+  }
+
   public get key(): keyof FValue {
     return HashName.getKey(this.hashName, this.hashNameContext);
   }
@@ -57,14 +69,14 @@ export class FieldArray<TValue, FValue> extends Disposable {
   @action
   public readonly remove = (index: number): void => {
     if (index in this.value) {
-      const deleted = this.value[index];
-      const nextValue = this.value.slice();
+      const deleted = this.value.splice(index, 1);
 
-      delete nextValue[index];
+      this.disposeFields(deleted);
 
-      this.value = nextValue;
+      this.values.splice(index, 1);
+      this.errors.splice(index, 1);
 
-      this.disposeFields([deleted]);
+      this.value = this.value.map((fields, index) => this.restoreFields(fields, HashName.create(index, this.hashName)));
     }
   };
 
@@ -74,6 +86,39 @@ export class FieldArray<TValue, FValue> extends Disposable {
         item[field].dispose();
       }
     });
+  };
+
+  private restoreFields = (
+    fields: Fields.FromModel<TValue, FValue>,
+    hashName: HashName
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): Fields.FromModel<TValue, FValue> => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const restored = {} as Fields.FromModel<any, FValue>;
+
+    for (const fieldKey in fields) {
+      const field = fields[fieldKey];
+
+      this.form.removeValidator(field.hashName);
+
+      if (Field.is(field)) {
+        restored[fieldKey] = new Field<TValue, TValue, FValue>(
+          field.config as Fields.Config<TValue, TValue, FValue>,
+          this.form,
+          hashName,
+          {
+            active: field.active,
+            touched: field.touched,
+            visited: field.visited,
+            valid: field.valid,
+            value: field.rawValue,
+          }
+        );
+      }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return restored as any;
   };
 
   private readonly createErrorContext = (): void => {

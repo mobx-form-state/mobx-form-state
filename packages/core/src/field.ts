@@ -12,31 +12,32 @@ import { Values } from './values';
 
 export class Field<TValue = any, MValue = any, FValue = any> extends Disposable {
   @observable
-  public active = false;
+  public active = this.defaultState.active ?? false;
 
   @observable
-  public touched = false;
+  public touched = this.defaultState.touched ?? false;
 
   @observable
-  public visited = false;
+  public visited = this.defaultState.visited ?? false;
 
   @observable
-  public valid = true;
+  public valid = this.defaultState.valid ?? true;
 
   public bind: FormControl.Variants<TValue> = FormControl.create(this);
 
   public hashName: HashName;
 
   constructor(
-    private readonly config: Fields.Config<TValue, MValue, FValue>,
+    public readonly config: Fields.Config<TValue, MValue, FValue>,
     public readonly form: Form<FValue>,
-    private readonly hashNameContext: HashName = HashName.createEmpty()
+    private readonly hashNameContext: HashName = HashName.createEmpty(),
+    private readonly defaultState: Partial<Fields.FieldState<TValue>> = {}
   ) {
     super();
     makeObservable(this);
     this.hashName = HashName.create(config, hashNameContext);
 
-    this.updateValue(config.defaultValue);
+    this.updateValue(typeof defaultState.value !== 'undefined' ? defaultState.value : config.defaultValue);
     this.autoDispose(this.form.registerValidator(this.validate, this.hashName));
     this.autoDispose(this.cleanup);
   }
@@ -63,7 +64,12 @@ export class Field<TValue = any, MValue = any, FValue = any> extends Disposable 
 
   @computed
   public get value(): TValue {
-    return this.format(this.values[this.key] as unknown as TValue);
+    return this.format(this.rawValue);
+  }
+
+  @computed
+  public get rawValue(): TValue {
+    return this.values[this.key] as unknown as TValue;
   }
 
   @computed
@@ -79,6 +85,8 @@ export class Field<TValue = any, MValue = any, FValue = any> extends Disposable 
   private get key(): keyof MValue {
     return HashName.getKey(this.hashName, this.hashNameContext);
   }
+
+  public static is = (x: unknown): x is Field => x instanceof Field;
 
   @action
   public onChange = (value: Values.ChangeEvent<TValue>): void => {
