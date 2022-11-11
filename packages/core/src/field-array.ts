@@ -12,7 +12,7 @@ import { Values } from './values';
 export type FieldArrayType<M> = Opaque<'fieldArray', M[]>;
 
 export class FieldArray<TValue, FValue> extends Disposable {
-  @observable.ref
+  @observable.shallow
   private value: Fields.FromModel<TValue, FValue>[] = [];
 
   public readonly hashName: HashName;
@@ -63,7 +63,7 @@ export class FieldArray<TValue, FValue> extends Disposable {
     HashName.getContext(hashName, this.form.errors);
     HashName.getContext(hashName, this.form.values);
 
-    this.value = this.value.concat(Fields.create(this.config.type, this.form, value, hashName));
+    this.value.push(Fields.create(this.config.type, this.form, value, hashName));
   };
 
   @action

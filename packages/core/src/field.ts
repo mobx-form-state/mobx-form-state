@@ -37,6 +37,7 @@ export class Field<TValue = any, MValue = any, FValue = any> extends Disposable 
     makeObservable(this);
     this.hashName = HashName.create(config, hashNameContext);
 
+    HashName.getContext(this.hashNameContext, this.form.errors);
     this.updateValue(typeof defaultState.value !== 'undefined' ? defaultState.value : config.defaultValue);
     this.autoDispose(this.form.registerValidator(this.validate, this.hashName));
     this.autoDispose(this.cleanup);
