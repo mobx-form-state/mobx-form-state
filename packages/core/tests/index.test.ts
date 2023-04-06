@@ -47,7 +47,16 @@ describe('simple example', () => {
       },
     });
 
+    form.fields.login.bind();
+    form.fields.password.bind();
+
     form.fields.hobbies.push({ hobbyId: 0, hobbyName: '' });
+
+    form.fields.hobbies.fields.forEach((field) => {
+      field.createdAt.bind();
+      field.hobbyId.bind();
+      field.hobbyName.bind();
+    });
 
     await form.validate();
 
@@ -172,7 +181,9 @@ describe('simple example', () => {
     expect(form.dirty).toBe(false);
     expect(form.valid).toBe(true);
 
+    form.fields.login.bind();
     form.fields.login.onChange('');
+    form.fields.password.bind();
     form.fields.password.onChange('');
 
     await form.validate();
@@ -391,5 +402,25 @@ describe('simple example', () => {
 
     expect(Object.keys(userForm.fields)).toEqual(Object.keys(new UserFormModel()));
     expect(Object.keys(emailsForm.fields)).toEqual(Object.keys(new EmailsModel()));
+  });
+
+  test('Field should validate only when is bound', async () => {
+    const form = new Form(UserFormModel);
+
+    form.fields.login.onChange('');
+    form.fields.password.onChange('');
+
+    await form.validate();
+
+    expect(form.fields.login.valid).toBe(true);
+    expect(form.fields.password.valid).toBe(true);
+
+    form.fields.login.bind();
+    form.fields.password.bind();
+
+    await form.validate();
+
+    expect(form.fields.login.valid).toBe(false);
+    expect(form.fields.password.valid).toBe(false);
   });
 });

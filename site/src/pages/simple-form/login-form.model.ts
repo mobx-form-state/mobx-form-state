@@ -4,9 +4,15 @@ import { maxLength, minLength, required, trim } from '../../utils';
 
 export class LoginFormModel {
   @field({ validate: [required(), minLength(5), maxLength(12)], parse: [trim()] })
+  name!: string;
+
+  @field()
+  hideName?: boolean = false;
+
+  @field({ validate: [required(), minLength(5), maxLength(12)], parse: [trim()] })
   username!: string;
 
-  @field({ validate: [required(), minLength(8), maxLength(20)], parse: [trim()] })
+  @field({ parse: [trim()] })
   password!: string;
 
   @field()

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { Field, Values } from '@mobx-form-state/core';
+import { Field, FormControl, Values } from '@mobx-form-state/core';
 import { observer } from 'mobx-react-lite';
-import { ComponentPropsWithRef, FunctionComponent, createElement } from 'react';
+import { ComponentPropsWithRef, FunctionComponent, createElement, useEffect, useMemo } from 'react';
 
 import { FieldContext } from './context';
 
@@ -31,7 +31,7 @@ export type ControlProps<
       Partial<ExtractByType<OfCP, keyof FormElementProps>>
   : BaseControl<TValue, MValue, FValue, OfC> & ComponentPropsWithRef<OfC>;
 
-export type BaseControl<TValue, MValue, FValue, OfC> = {
+export type BaseControl<TValue, MValue, FValue, OfC> = FormControl.BindOptions<TValue, MValue, FValue> & {
   field: Field<TValue, MValue, FValue>;
   of: OfC;
   as?: 'input' | 'checkbox' | 'radio';
@@ -40,27 +40,41 @@ export type BaseControl<TValue, MValue, FValue, OfC> = {
 
 export type BindAs = 'input' | 'checkbox' | 'radio';
 
-const getBindings = (field: Field, as: BindAs, value?: any) => {
+const getBindings = <TValue, MValue, FValue>(
+  field: Field,
+  as: BindAs,
+  options: FormControl.BindOptions<TValue, MValue, FValue>,
+  value?: any
+) => {
   switch (as) {
     case 'input':
-      return field.bind();
+      return field.bind(options);
     case 'checkbox':
-      return field.bind.checkbox();
+      return field.bind.checkbox(options);
     case 'radio':
-      return field.bind.radio(value);
+      return field.bind.radio(options, value);
   }
 };
 
-const FormControl = <OfC extends FormElement, TValue, MValue, FValue>({
+const $Control = <OfC extends FormElement, TValue, MValue, FValue>({
   field,
   of,
   as = 'input',
   omitProps,
+  format,
+  parse,
+  validate,
   ...rest
 }: ControlProps<OfC, TValue, MValue, FValue>) => {
   const isTag = typeof of === 'string';
 
-  const bindings = getBindings(field as Field, as, rest.value);
+  const bindOptions = useMemo(() => ({ format, parse, validate }), [format, parse, validate]);
+
+  const bindings = getBindings(field as Field, as, bindOptions, rest.value);
+
+  useEffect(() => {
+    return () => bindings.unbind();
+  }, []);
 
   const hasError = (field.touched || field.form.submitFailed) && field.invalid;
 
@@ -88,4 +102,4 @@ const FormControl = <OfC extends FormElement, TValue, MValue, FValue>({
   );
 };
 
-export const Control = observer(FormControl);
+export const Control = observer($Control);

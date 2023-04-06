@@ -15,6 +15,7 @@ import {
   TextField,
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
+import { maxLength, minLength, required } from 'site/src/utils';
 
 import { Box } from '../../components/box';
 import { Gender, LoginFormModel } from './login-form.model';
@@ -37,8 +38,26 @@ export const LoginForm = observer(() => {
     <Paper sx={{ padding: 4 }}>
       <form onSubmit={form.handleSubmit}>
         <Box gap={10} column>
+          {!form.fields.hideName.value && <Control of={TextField} field={form.fields.name} label="Name" fullWidth />}
+
+          <Control
+            of={FormControlLabel}
+            field={form.fields.hideName}
+            as="checkbox"
+            omitProps={['helperText', 'error']}
+            control={<Checkbox />}
+            label="Hide name (Disables name field validation and hides it from the form)"
+          />
+
           <Control of={TextField} field={form.fields.username} label="Username" fullWidth />
-          <Control of={TextField} field={form.fields.password} label="Password" fullWidth type="password" />
+          <Control
+            of={TextField}
+            field={form.fields.password}
+            label="Password"
+            fullWidth
+            type="password"
+            validate={[required(), minLength(8), maxLength(20)]}
+          />
           <Control
             of={FormControlLabel}
             field={form.fields.employed}

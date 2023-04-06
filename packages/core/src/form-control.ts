@@ -1,5 +1,6 @@
+import { Formatter, Parser, Validator } from '.';
 import { Field } from './field';
-import { Callback } from './types';
+import { Callback, MaybeArray } from './types';
 import { Values } from './values';
 
 export namespace FormControl {
@@ -10,6 +11,7 @@ export namespace FormControl {
     onFocus: Callback;
     onBlur: Callback;
     value: TValue;
+    unbind: Callback<void>;
   };
 
   export type Checkbox<TValue> = {
@@ -17,6 +19,7 @@ export namespace FormControl {
     onFocus: Callback;
     onBlur: Callback;
     checked: TValue;
+    unbind: Callback<void>;
   };
 
   export type Radio<TValue> = {
@@ -25,35 +28,70 @@ export namespace FormControl {
     onBlur: Callback;
     checked: boolean;
     value: TValue;
+    unbind: Callback<void>;
   };
 
-  export type Variants<TValue> = (() => Input<TValue>) & {
-    checkbox: () => Checkbox<TValue>;
-    radio: (value: TValue) => Radio<TValue>;
+  export type Variants<TValue, MValue, FValue> = ((
+    bindOptions?: BindOptions<TValue, MValue, FValue>
+  ) => Input<TValue>) & {
+    checkbox: (bindOptions?: BindOptions<TValue, MValue, FValue>) => Checkbox<TValue>;
+    radio: (value: TValue, bindOptions?: BindOptions<TValue, MValue, FValue>) => Radio<TValue>;
   };
 
-  export const create = <TValue, MValue, FValue>(field: Field<TValue, MValue, FValue>): Variants<TValue> => {
-    const bind: Variants<TValue> = (): Input<TValue> => ({
-      onChange: field.onChange,
-      onFocus: field.onFocus,
-      onBlur: field.onBlur,
-      value: field.value,
-    });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export type BindOptions<TValue, MValue, FValue> = {
+    parse?: MaybeArray<Parser<TValue, TValue, MValue, FValue>>;
+    format?: MaybeArray<Formatter<TValue, TValue, MValue, FValue>>;
+    validate?: MaybeArray<Validator<TValue, MValue, FValue>>;
+  };
 
-    bind.checkbox = (): Checkbox<TValue> => ({
-      onChange: field.onChange,
-      onFocus: field.onFocus,
-      onBlur: field.onBlur,
-      checked: field.value,
-    });
+  type CreateOptions<TValue, MValue, FValue> = {
+    onBind: (options?: BindOptions<TValue, MValue, FValue>) => void;
+    onUnbind: Callback;
+  };
 
-    bind.radio = (value: TValue): Radio<TValue> => ({
-      onChange: field.onChange,
-      onFocus: field.onFocus,
-      onBlur: field.onBlur,
-      checked: field.value === value,
-      value,
-    });
+  export const create = <TValue, MValue, FValue>(
+    field: Field<TValue, MValue, FValue>,
+    options: CreateOptions<TValue, MValue, FValue>
+  ): Variants<TValue, MValue, FValue> => {
+    const bind: Variants<TValue, MValue, FValue> = (
+      bindOptions?: BindOptions<TValue, MValue, FValue>
+    ): Input<TValue> => {
+      options.onBind(bindOptions);
+
+      return {
+        onChange: field.onChange,
+        onFocus: field.onFocus,
+        onBlur: field.onBlur,
+        value: field.value,
+        unbind: options.onUnbind,
+      };
+    };
+
+    bind.checkbox = (bindOptions?: BindOptions<TValue, MValue, FValue>): Checkbox<TValue> => {
+      options.onBind(bindOptions);
+
+      return {
+        onChange: field.onChange,
+        onFocus: field.onFocus,
+        onBlur: field.onBlur,
+        checked: field.value,
+        unbind: options.onUnbind,
+      };
+    };
+
+    bind.radio = (value: TValue, bindOptions?: BindOptions<TValue, MValue, FValue>): Radio<TValue> => {
+      options.onBind(bindOptions);
+
+      return {
+        onChange: field.onChange,
+        onFocus: field.onFocus,
+        onBlur: field.onBlur,
+        checked: field.value === value,
+        value,
+        unbind: options.onUnbind,
+      };
+    };
 
     return bind;
   };

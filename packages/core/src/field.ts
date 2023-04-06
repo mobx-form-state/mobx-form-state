@@ -10,6 +10,13 @@ import { Disposable } from './utils/disposable';
 import { Validate } from './validate';
 import { Values } from './values';
 
+/**
+ * DValue - type of the display value (used for formatting and parsing)
+ * TValue - type of the field value
+ * MValue - type of the model value
+ * FValue - type of the form value
+ **/
+
 export class Field<TValue = any, MValue = any, FValue = any> extends Disposable {
   @observable
   public active = this.defaultState.active ?? false;
@@ -23,9 +30,14 @@ export class Field<TValue = any, MValue = any, FValue = any> extends Disposable 
   @observable
   public valid = this.defaultState.valid ?? true;
 
-  public bind: FormControl.Variants<TValue> = FormControl.create(this);
+  @observable
+  public isBound = false;
+
+  public bind: FormControl.Variants<TValue, MValue, FValue>;
 
   public hashName: HashName;
+
+  private bindOptions?: FormControl.BindOptions<TValue, MValue, FValue>;
 
   constructor(
     public readonly config: Fields.Config<TValue, MValue, FValue>,
@@ -35,6 +47,12 @@ export class Field<TValue = any, MValue = any, FValue = any> extends Disposable 
   ) {
     super();
     makeObservable(this);
+
+    this.bind = FormControl.create(this, {
+      onBind: this.onBind,
+      onUnbind: this.onUnbind,
+    });
+
     this.hashName = HashName.create(config, hashNameContext);
 
     HashName.getContext(this.hashNameContext, this.form.errors);
@@ -130,13 +148,27 @@ export class Field<TValue = any, MValue = any, FValue = any> extends Disposable 
   };
 
   @action
+  private onBind = (options?: FormControl.BindOptions<TValue, MValue, FValue>): void => {
+    this.isBound = true;
+    this.bindOptions = options;
+  };
+
+  @action
+  private onUnbind = (): void => {
+    this.isBound = false;
+    delete this.bindOptions;
+  };
+
+  @action
   private cleanup = (): void => {
     delete this.values[this.key];
     delete this.errors[this.key];
   };
 
   private validate = async (): Promise<boolean> => {
-    const result = await Validate.iterate(this.config.validate, this);
+    if (!this.isBound) return true;
+
+    const result = await Validate.iterate(this.bindOptions?.validate || this.config.validate, this);
 
     const valid = !Validate.isError(result);
     const message = Validate.getMessage(result);
@@ -147,8 +179,8 @@ export class Field<TValue = any, MValue = any, FValue = any> extends Disposable 
   };
 
   private parse = (value: any): TValue =>
-    Validate.toCollection(this.config.parse).reduce((acc, item) => item(acc, this), value);
+    Validate.toCollection(this.bindOptions?.parse || this.config.parse).reduce((acc, item) => item(acc, this), value);
 
   private format = (value: TValue): any =>
-    Validate.toCollection(this.config.format).reduce((acc, item) => item(acc, this), value);
+    Validate.toCollection(this.bindOptions?.format || this.config.format).reduce((acc, item) => item(acc, this), value);
 }
