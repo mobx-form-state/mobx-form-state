@@ -404,16 +404,20 @@ describe('simple example', () => {
     expect(Object.keys(emailsForm.fields)).toEqual(Object.keys(new EmailsModel()));
   });
 
-  test('Field should validate only when is bound', async () => {
-    const form = new Form(UserFormModel);
+  test('Field should validate when is bound, visited or touched', async () => {
+    const form = new Form(UserFormModel, {
+      initialValues: {
+        login: '',
+        password: '',
+      },
+    });
 
-    form.fields.login.onChange('');
-    form.fields.password.onChange('');
+    form.fields.password.onChange(''); // touched
 
     await form.validate();
 
     expect(form.fields.login.valid).toBe(true);
-    expect(form.fields.password.valid).toBe(true);
+    expect(form.fields.password.valid).toBe(false);
 
     form.fields.login.bind();
     form.fields.password.bind();

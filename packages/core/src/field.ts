@@ -114,7 +114,7 @@ export class Field<TValue = any, MValue = any, FValue = any> extends Disposable 
     }
 
     this.updateValue(this.parse(Values.fromEvent(value)));
-    this.validate();
+    this.form.validate();
   };
 
   @action
@@ -122,7 +122,7 @@ export class Field<TValue = any, MValue = any, FValue = any> extends Disposable 
     this.touched = true;
     this.form.touched = true;
     this.active = false;
-    this.validate();
+    this.form.validate();
   };
 
   @action
@@ -166,16 +166,18 @@ export class Field<TValue = any, MValue = any, FValue = any> extends Disposable 
   };
 
   private validate = async (): Promise<boolean> => {
-    if (!this.isBound) return true;
+    if (this.touched || this.visited || this.isBound) {
+      const result = await Validate.iterate(this.bindOptions?.validate || this.config.validate, this);
 
-    const result = await Validate.iterate(this.bindOptions?.validate || this.config.validate, this);
+      const valid = !Validate.isError(result);
+      const message = Validate.getMessage(result);
 
-    const valid = !Validate.isError(result);
-    const message = Validate.getMessage(result);
+      this.updateError(message, valid);
 
-    this.updateError(message, valid);
+      return valid;
+    }
 
-    return valid;
+    return true;
   };
 
   private parse = (value: any): TValue =>
