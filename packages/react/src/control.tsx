@@ -6,6 +6,7 @@ import { observer } from 'mobx-react-lite';
 import { ComponentPropsWithRef, FunctionComponent, useEffect, useMemo } from 'react';
 
 import { FieldContext } from './context';
+import { hasError } from './has-error';
 
 export type FormElementProps<TValue = any> = {
   onChange?: (value?: Values.ChangeEvent<TValue>) => void;
@@ -35,6 +36,7 @@ export type BaseControl<TValue, MValue, FValue, OfC> = FormControl.BindOptions<T
   field: Field<TValue, MValue, FValue>;
   of: OfC;
   as?: 'input' | 'checkbox' | 'radio';
+  omitProps?: string[] | boolean /* @deprecated */;
 };
 
 export type BindAs = 'input' | 'checkbox' | 'radio';
@@ -62,19 +64,46 @@ const $Control = <OfC extends FormElement, TValue, MValue, FValue>({
   format,
   parse,
   validate,
+  omitProps,
+  value,
   ...rest
 }: ControlProps<OfC, TValue, MValue, FValue>) => {
   const bindOptions = useMemo(() => ({ format, parse, validate }), [format, parse, validate]);
 
-  const { unbind, ...bindings } = getBindings(field, as, bindOptions, rest.value);
+  const { unbind, ...bindings } = getBindings(field, as, bindOptions, value);
 
   useEffect(() => {
     return () => unbind();
-  }, []);
+  }, [unbind]);
+
+  let renderProps = {
+    ...bindings,
+    ...rest,
+  };
+
+  // TODO: to be removed in the next major release
+  const isCustomComponent = typeof Component !== 'string';
+
+  if (isCustomComponent && !omitProps) {
+    const error = hasError(field);
+
+    const customProps: { error: boolean; helperText?: string } = {
+      error,
+    };
+
+    if (error) {
+      customProps.helperText = field.error;
+    }
+
+    renderProps = {
+      ...renderProps,
+      ...customProps,
+    };
+  }
 
   return (
     <FieldContext.Provider value={field as Field}>
-      <Component {...bindings} {...rest} />
+      <Component {...renderProps} />
     </FieldContext.Provider>
   );
 };

@@ -44,7 +44,6 @@ export const LoginForm = observer(() => {
             of={FormControlLabel}
             field={form.fields.hideName}
             as="checkbox"
-            omitProps={['helperText', 'error']}
             control={<Checkbox />}
             label="Hide name (Disables name field validation and hides it from the form)"
           />
@@ -62,7 +61,6 @@ export const LoginForm = observer(() => {
             of={FormControlLabel}
             field={form.fields.employed}
             as="checkbox"
-            omitProps={['helperText', 'error']}
             control={<Checkbox />}
             label="Employed"
           />
@@ -95,7 +93,6 @@ export const LoginForm = observer(() => {
                 of={FormControlLabel}
                 field={form.fields.sause}
                 as="radio"
-                omitProps={['helperText', 'error']}
                 value="mustard"
                 control={<Radio />}
                 label="Mustard"
@@ -104,7 +101,6 @@ export const LoginForm = observer(() => {
                 of={FormControlLabel}
                 field={form.fields.sause}
                 as="radio"
-                omitProps={['helperText', 'error']}
                 value="ketchup"
                 control={<Radio />}
                 label="Ketchup"
