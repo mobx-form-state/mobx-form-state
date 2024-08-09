@@ -2,7 +2,7 @@
   "$schema": "node_modules/lerna/schemas/lerna-schema.json",
   "npmClient": "yarn",
   "packages": ["packages/*"],
-  "version": "1.2.3-alpha.0",
+  "version": "1.2.3-alpha.1",
   "command": {
     "publish": {
       "directory": "{workspaceRoot}/{projectRoot}/build"
