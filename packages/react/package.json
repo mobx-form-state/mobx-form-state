@@ -26,7 +26,7 @@
   "peerDependencies": {
     "mobx": "^6",
     "mobx-react-lite": "^4",
-    "react": "^17 || ^18"
+    "react": "^17 || ^18 || ^19"
   },
   "dependencies": {
     "@mobx-form-state/core": "^1.2.3-alpha.0"
